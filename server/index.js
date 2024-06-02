@@ -3,12 +3,14 @@ import cors from 'cors'
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import User from './Models/user.model.js'
+import jwt from 'jsonwebtoken';
 
 dotenv.config() //config dotenv variables
 const app=express();
 app.use(cors()) //cross origin allowed
 app.use(express.json())  // allows json to be parsed coming as req body
 const PORT=process.env.PORT
+const JWT_WEBTOKEN=process.env.JWT_WEBTOKEN
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -31,8 +33,11 @@ app.post('/login',async(req,resp)=>{
         const { email, password } = req.body;
         const user = await User.findOne({ email, password });
         if (user) {
-          // User found, return user object
-          resp.status(200).json(user);
+          const token=jwt.sign({
+            email:req.body.email,
+            name:req.body.name
+          },'1234554321')
+          resp.send({status:'ok',user:token});
         }
         else {
           // User not found

@@ -1,10 +1,13 @@
 import  { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    name: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,14 +27,16 @@ const Login = () => {
         },
         body: JSON.stringify(formData)
       });
-
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
       const data = await response.json();
+      localStorage.setItem('token',data.user)
       console.log('Response:', data);
+
       // Handle successful response
+      // localStorage.setItem('token')
+      navigate('/')
     }
      catch (error) {
       console.error('Error:', error.message);
@@ -43,7 +48,7 @@ const Login = () => {
       <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
-          {/* <div className="mb-4">
+          <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="name">Name</label>
             <input
               type="text"
@@ -54,7 +59,7 @@ const Login = () => {
               className="w-full px-3 py-2 border rounded"
               required
             />
-          </div> */}
+          </div>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
             <input
