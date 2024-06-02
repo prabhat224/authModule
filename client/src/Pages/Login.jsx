@@ -36,7 +36,7 @@ const Login = () => {
 
       // Handle successful response
       // localStorage.setItem('token')
-      navigate('/')
+      navigate('/home')
     }
      catch (error) {
       console.error('Error:', error.message);

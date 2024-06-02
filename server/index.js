@@ -51,6 +51,56 @@ app.post('/login',async(req,resp)=>{
 })
 
 
+
+app.get('/quotes', async (req, resp) => {
+  try {
+    const token = req.headers['x-access-token'];
+    const decoded = jwt.verify(token, '1234554321'); 
+    const email = decoded.email;
+
+    const user = await User.findOne({ email:email });
+
+    if (!user) {
+      resp.status(404).json({ status: 'user not found' });
+      return;
+    }
+
+    resp.json({ status: 'ok', quotes: user.quotes });
+  }
+  catch (e) {
+    console.error(e);
+    resp.status(401).json({ status: 'user not authenticated' });
+  }
+});
+
+
+
+app.post('/quotes', async (req, resp) => {
+  try {
+    const token = req.headers['x-access-token'];
+    const decoded = jwt.verify(token, '1234554321'); // Replace 'your-secret-key' with your actual secret key
+    const email = decoded.email;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      resp.status(404).json({ status: 'user not found' });
+      return;
+    }
+
+    user.quotes.push(req.body.quote);
+
+    await user.save();
+
+    resp.json({ status: 'ok' });
+  } catch (e) {
+    console.error(e);
+    resp.status(401).json({ status: 'user not authenticated' });
+  }
+});
+
+
+
+
 app.post('/signup',async(req,resp)=>{
     try{
         await User.create(req.body)
